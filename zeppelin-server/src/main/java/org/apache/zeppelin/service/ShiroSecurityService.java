@@ -45,6 +45,7 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.realm.ldap.JndiLdapRealm;
 import org.apache.shiro.realm.text.IniRealm;
+import org.apache.zeppelin.realm.remoteuser.realm.RemoteUserRealm;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.JdbcUtils;
@@ -241,6 +242,12 @@ public class ShiroSecurityService implements SecurityService {
           break;
         } else if (name.equals("org.apache.zeppelin.realm.ActiveDirectoryGroupRealm")) {
           allRoles = ((ActiveDirectoryGroupRealm) realm).getListRoles();
+          break;
+        } else if (name.equals("org.apache.zeppelin.realm.remoteuser.realm.RemoteUserRealm")) {
+          AuthorizationInfo auth = ((RemoteUserRealm) realm).queryForAuthorizationInfo(subject.getPrincipals());
+          if (auth != null) {
+            roles = new HashSet<>(auth.getRoles());
+          }
           break;
         }
       }
