@@ -41,6 +41,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.zeppelin.conf.ZeppelinConfiguration;
 import org.apache.zeppelin.realm.ActiveDirectoryGroupRealm;
 import org.apache.zeppelin.realm.LdapRealm;
+import org.apache.zeppelin.realm.remoteuser.realm.RemoteUserRealm;
 import org.apache.zeppelin.server.ZeppelinServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +166,14 @@ public class SecurityUtils {
         } else if (name.equals("org.apache.zeppelin.realm.ActiveDirectoryGroupRealm")) {
           allRoles = ((ActiveDirectoryGroupRealm) realm).getListRoles();
           break;
+        } else if (name.equals("org.apache.zeppelin.realm.remoteuser.realm.RemoteUserRealm")) {
+          AuthorizationInfo auth = ((RemoteUserRealm) realm).queryForAuthorizationInfo(subject.getPrincipals());
+          if (auth != null) {
+            roles = new HashSet<>(auth.getRoles());
+          }
+          break;
         }
+      
       }
       if (allRoles != null) {
         Iterator it = allRoles.entrySet().iterator();
